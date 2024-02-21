@@ -3,9 +3,10 @@ dotenv.config();
 import express from 'express';
 import {connectDB} from './config/db.js';
 import chalk from 'chalk';
-// import tasks from './routes/tasks.js';
 import {notFound , errorHandler} from './middleware/error.middleware.js';
 import userRouter from './routes/user.routes.js';
+import taskRouter from './routes/task.routes.js';
+import subTaskRouter from './routes/subtask.routes.js';
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.get('/', (req, res) => {
 
 // app.use('/api/v1/tasks', tasks);
 app.use('/api/v1/user',userRouter);
+app.use('/api/v1/task',taskRouter);
+app.use('/api/v1/subTask',subTaskRouter);
 app.use(notFound);
 
 const port = process.env.PORT || 5000;
