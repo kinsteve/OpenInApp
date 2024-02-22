@@ -4,7 +4,7 @@ import { generateJWTtoken } from "../utils/generateJWT.util.js";
 
 const registerUser = asyncHandler(async (req, res) => {
     const { phone_number, priority } = req.body;
-  
+    console.log(phone_number);
     // Checking if the phone number is already registered
     const existingUser = await User.findOne({ phone_number });
     if (existingUser) {

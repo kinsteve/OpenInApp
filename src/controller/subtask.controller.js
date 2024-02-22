@@ -21,7 +21,7 @@ const createSubTask = asyncHandler(async (req, res) => {
 const updateSubTask = asyncHandler(async (req, res) => {
     const { subTaskId } = req.params;
     const { status } = req.body;
-  
+   // using findOneAndUpdate instead of findByIdAndUpdate because findByIdAndUpdate bypasses post('save') middleware
     try {
       const updatedSubTask = await SubTask.findOneAndUpdate(
         { _id: subTaskId },

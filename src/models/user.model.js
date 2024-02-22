@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
     phone_number: {
-        type: Number,
+        type: String, // Changed to String to allow non-numeric characters
         required: true,
         unique: true,
         validate: {
             validator: function (v) {
-                return /^\d{10}$/.test(v); // Validates that the phone number is a 10-digit number
+                return /^\+\d{10,15}$/.test(v); // Allows a plus sign followed by 10 to 15 digits
             },
             message: props => `${props.value} is not a valid phone number!`
         }
