@@ -27,7 +27,6 @@ app.get('/', (req, res) => {
 app.post('/webhook', (req, res) => {
   const { CallStatus, CallSid } = req.body;
   // console.log(req.body);
-  console.log('hi');
   handleCallStatus(CallStatus,CallSid);
   res.sendStatus(200);
 });

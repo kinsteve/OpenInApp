@@ -10,16 +10,25 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
 let currentCallStatus;
+let currentStatusResolver;
 
 export const handleCallStatus = (status, sid) => {
-  // Handle the call status here
   console.log(`Received call status for CallSid ${sid}: ${status}`);
   currentCallStatus = status;
+  if (currentStatusResolver) {
+    currentStatusResolver();
+  }
+};
+
+const waitForCallStatus = () => {
+  return new Promise(resolve => {
+    currentStatusResolver = resolve;
+  });
 };
 
 const makeVoiceCall = async () => {
   try {
-    const tasks = await Task.find({ due_date: { $lt: new Date() } }); // Fetch tasks that have crossed their due date
+    const tasks = await Task.find({ due_date: { $lt: new Date() } , status: { $ne: "DONE" } }); // Fetch tasks that have crossed their due date
     let callAnswered = false; // Variable to keep track if call is answered or not
 
     for (const task of tasks) {
@@ -42,7 +51,7 @@ const makeVoiceCall = async () => {
             console.log(call.sid);
 
             // Wait for a few seconds to check if the call is answered
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await waitForCallStatus();
 
             // Check if the call was answered
             if (currentCallStatus === 'completed') {
