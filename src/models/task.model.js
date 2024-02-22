@@ -22,7 +22,6 @@ const taskSchema = new mongoose.Schema({
   },
   priority: {
     type: Number,
-    required: [true, 'Priority is required'],
     enum: {
       values: [0, 1, 2, 3],
       message: `{VALUE} is not a valid priority. Priority must be 0, 1, 2, or 3.`,

@@ -23,17 +23,19 @@ const updateSubTask = asyncHandler(async (req, res) => {
     const { status } = req.body;
   
     try {
-      const updatedSubTask = await SubTask.findByIdAndUpdate(
-        subTaskId,
+      const updatedSubTask = await SubTask.findOneAndUpdate(
+        { _id: subTaskId },
         { $set: { status } },
-        { new: true , runValidators: true}
-      );
-  
+        { new: true, runValidators: true }
+      ).exec();
+
+      
       if (!updatedSubTask) {
         res.status(404).json({ message: 'Subtask not found' });
         return;
       }
-  
+      updatedSubTask.save();
+      
       res.status(200).json({ message: 'Subtask updated successfully', subtask: updatedSubTask });
     } catch (error) {
       res.status(500).json({ message: 'Failed to update subtask', error: error.message });
@@ -53,7 +55,7 @@ const deleteSubTask = asyncHandler(async (req, res) => {
   
       // Soft delete the subtask
       subTask.deleted_at = new Date();
-      await subTask.save();
+      await subTask.save({new:true});
   
       res.status(200).json({ message: 'Subtask deleted successfully', subTask });
     } catch (error) {

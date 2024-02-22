@@ -7,7 +7,7 @@ import {notFound , errorHandler} from './middleware/error.middleware.js';
 import userRouter from './routes/user.routes.js';
 import taskRouter from './routes/task.routes.js';
 import subTaskRouter from './routes/subtask.routes.js';
-
+import './cron/priority.cron.js';
 const app = express();
 
 //middleware

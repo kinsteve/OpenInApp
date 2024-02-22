@@ -23,6 +23,33 @@ const subTaskSchema = new mongoose.Schema({
 } }
 );
 
+subTaskSchema.statics.countCompletedSubTasks = async function(taskId) {
+  return this.countDocuments({ task_id: taskId, status: 1 , deleted_at: null }); // Count completed subtasks
+};
+
+subTaskSchema.post('save', async function() {
+  const Task = mongoose.model('Task');
+  const taskId = this.task_id;
+  // console.log(taskId);
+  // Count the number of completed subtasks for the task
+  const completedSubTasksCount = await this.constructor.countCompletedSubTasks(taskId);
+
+  // Get the total number of subtasks for the task
+  const totalSubTasksCount = await this.constructor.countDocuments({ task_id: taskId , deleted_at: null });
+
+  let newStatus = 'TODO'; // Default status
+
+  if (completedSubTasksCount > 0 && completedSubTasksCount < totalSubTasksCount) {
+    newStatus = 'IN_PROGRESS'; // Some subtasks are completed
+  } else if (completedSubTasksCount === totalSubTasksCount) {
+    newStatus = 'DONE'; // All subtasks are completed
+  }
+
+  // Update task status based on subtask status
+  await Task.findByIdAndUpdate(taskId, { status: newStatus });
+});
+
 const SubTask = mongoose.model('SubTask', subTaskSchema);
+
 
 export default SubTask;
